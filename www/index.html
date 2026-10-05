@@ -234,6 +234,42 @@ tr:hover td{background:#fff}
 .rcheck{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--ink-soft);cursor:pointer}
 .rk.hide-mn .mnem,.rk.hide-mn .parts{display:none}
 @media(max-width:640px){.rgroup{grid-template-columns:1fr;gap:8px}.rtile{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.rtile .tip{flex-basis:100%}.rtile .gl{font-size:34px}.rgrid{grid-template-columns:1fr}}
+/* daily 日課 */
+.dstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:6px 0 4px}
+.dstat{background:#fff;border:1.5px solid #D8CFBB;border-radius:12px;padding:10px 12px}
+.dstat .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);font-weight:700}
+.dstat .val{font-family:var(--disp);font-size:24px;line-height:1.2;color:var(--indigo)}
+.dstat .val small{font-family:var(--jp);font-size:13px;color:var(--ink-soft)}
+.dstat .sub{font-size:12px;color:var(--ink-soft)}
+.dbar{height:7px;background:#E8DFC9;border-radius:6px;overflow:hidden;margin-top:6px}
+.dbar i{display:block;height:100%;background:var(--ok)}
+.dproj{font-size:13px;line-height:1.6;margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--washi-d)}
+.dproj b{color:var(--indigo-d)}
+.dproj .late{color:var(--shu-d);font-weight:700}
+.dstudy{display:flex;justify-content:center;margin-top:12px}
+.dstudy .btn{min-width:240px;font-size:16px;padding:14px 20px}
+.dstudy .btn.done{background:var(--ok);color:#fff}
+.ddone{background:#E7F0E5;border:1.5px solid var(--ok);border-radius:12px;padding:12px 14px;text-align:center;font-size:14px;margin:12px 0;display:grid;gap:8px;justify-items:center}
+.dreview{background:#FBEFC9;border:1.5px solid var(--gold);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dlist td.ck{width:44px}
+.dlist input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);cursor:pointer}
+.dlist tr.isdone td{color:var(--ink-soft)}
+.dlog{display:grid;gap:8px}
+.dday{background:#fff;border:1.5px solid #D8CFBB;border-radius:12px;padding:10px 12px}
+.dday .hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;cursor:pointer}
+.dday .dt{font-weight:700;font-size:14px;min-width:130px}
+.dday .dt small{display:block;font-weight:400;color:var(--ink-soft);font-size:11.5px}
+.dday .ct{font-size:13px;flex:1 1 220px;display:flex;gap:12px;flex-wrap:wrap}
+.dday .ct span b{font-variant-numeric:tabular-nums}
+.dday .full{color:var(--ok)}
+.dwords{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.dwords span{font-family:var(--disp);font-size:15px;border:1px solid #D8CFBB;border-radius:6px;padding:2px 7px;background:var(--washi)}
+.dwords span.no{opacity:.45;text-decoration:line-through;background:#fff}
+.dwhead{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--shu);margin-top:10px}
+.dset summary{cursor:pointer;font-weight:700;color:var(--indigo);font-size:14px}
+.dset .filterrow{margin-top:10px}
+.dset input[type=number]{width:80px;padding:8px;border:1.5px solid var(--indigo);border-radius:8px;font-size:14px;font-family:var(--jp)}
+.dconfirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--shu-d);font-size:13px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -398,7 +434,7 @@ function statusSelectHTML(storeKey,id){
 }
 
 /* ---------- nav ---------- */
-const TABS=[['home','ホーム'],['kanji','漢字'],['radicals','部首'],['vocab','語彙'],['pj','PJ語彙'],['tango','単語2000'],['grammar','文法'],['sentences','例文'],['quiz','クイズ']];
+const TABS=[['home','ホーム'],['daily','日課'],['kanji','漢字'],['radicals','部首'],['vocab','語彙'],['pj','PJ語彙'],['tango','単語2000'],['grammar','文法'],['sentences','例文'],['quiz','クイズ']];
 let tab='home';
 function renderNav(){
   document.getElementById('nav').innerHTML = TABS.map(([id,l])=>
@@ -472,6 +508,8 @@ function homeView(){
   ${storageWorks()?'':'<div class="warnbox" style="margin-bottom:14px">⚠ This browser is blocking saved data (private/incognito mode or an embedded preview). The app works fully, but progress will reset when you close it. Open the deployed site in a normal browser tab to keep your progress.</div>'}
   <div class="countdown"><b>${days}</b><span>days until JLPT · 2026年12月6日 <span class="mm">စာမေးပွဲအထိ</span></span></div>
   <div class="homegrid">
+    ${(()=>{const L=dEnsureToday(),e=L[dToday()]||{k:[],v:[]};const st=dSets(L);const a=e.k.filter(x=>st.sK.has(x)).length,b=e.v.filter(x=>st.sV.has(x)).length;
+      return `<button class="hcard" onclick="go('daily')"><span class="stamp">${a+b===e.k.length+e.v.length&&e.k.length+e.v.length?'✓ done':'today'}</span><div class="big">課</div><h3>日課 Today's study</h3><p>Kanji <b>${a}/${e.k.length}</b> · 単語2000 words <b>${b}/${e.v.length}</b>. Your daily batch, with a log of every word you study.</p></button>`;})()}
     <button class="hcard" onclick="go('kanji')"><span class="stamp">${DATA.kanji.length} 字</span><div class="big">漢</div><h3>Kanji flashcards</h3><p>N5 (120) · N4 (200) · N3 (336) — readings, radicals and mnemonics. Progress: ${known('N5')+known('N4')+known('N3')} marked known.</p></button>
     <button class="hcard" onclick="go('radicals')"><span class="stamp">${DATA.radicals.length} 部首</span><div class="big">部</div><h3>Radicals 部首</h3><p>Every kanji grouped by radical, with spotting tips, mnemonics, N5–N3 example words and sentences. Kanji and vocabulary flashcards.</p></button>
     <button class="hcard" onclick="go('vocab')"><span class="stamp">${(DATA.kvocab.length+DATA.vocab3.length)}+ 語</span><div class="big">語</div><h3>Vocabulary</h3><p>MNN N5/N4 by part of speech, kanji-linked compounds, and the full Sou Matome N3 list with <span class="mm">မြန်မာ</span> translations.</p></button>
@@ -1561,7 +1599,7 @@ function saveSettings(closeAfter){
   jset('cloud_sync', sync);
   if(closeAfter!==false){ closeSettings(); render(); }
 }
-const PROGRESS_KEYS=['ai_settings','status_kanji_N5','status_kanji_N4','status_kanji_N3','status_vocab','status_grammar','status_sentences','status_mnnsent','status_pjvocab','status_tango','known_kanji_N5','known_kanji_N4','known_kanji_N3','known_vocab','known_grammar','pj_category','pj_overrides','pj_custom','tango_overrides','tango_custom','status_radvocab'];
+const PROGRESS_KEYS=['ai_settings','status_kanji_N5','status_kanji_N4','status_kanji_N3','status_vocab','status_grammar','status_sentences','status_mnnsent','status_pjvocab','status_tango','known_kanji_N5','known_kanji_N4','known_kanji_N3','known_vocab','known_grammar','pj_category','pj_overrides','pj_custom','tango_overrides','tango_custom','status_radvocab','daily_log','daily_plan'];
 const SYNC_KEYS=PROGRESS_KEYS.filter(k=>k!=='ai_settings');
 /* ---------- cloud sync (Firebase Realtime Database REST API) ---------- */
 let sync = jget('cloud_sync',{on:false,code:'',dbUrl:'',lastSync:0});
@@ -1980,9 +2018,331 @@ function radicalsView(){
   ${body}</div>`;
 }
 
+/* ---------- DAILY 日課 (fixed daily batch + study log) ---------- */
+// daily_plan: {kPer, vPer, kOrder:'radical'|'level'}
+// daily_log : {'YYYY-MM-DD': {k:[kanji], v:[tango ids], dk:{kanji:ts}, dv:{id:ts}}}
+//   k/v are the items assigned that day (unfinished items from earlier days are carried over first);
+//   dk/dv record what was actually studied that day.
+let dState={sub:'k',mode:'cards',i:0,flip:false,day:null,open:null,confirmReset:false,setOpen:false};
+const D_EXAM='2026-12-06';
+function dToday(){ const d=(typeof window!=='undefined'&&window.__dailyNow)?new Date(window.__dailyNow):new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function dAddDays(key,n){ const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d+n);
+  return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); }
+function dDiff(a,b){ const p=k=>{const [y,m,d]=k.split('-').map(Number);return Date.UTC(y,m-1,d)}; return Math.round((p(b)-p(a))/864e5); }
+function dFmt(key){ const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d);
+  return t.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); }
+function dPlan(){ return Object.assign({kPer:15,vPer:40,kOrder:'radical'},jget('daily_plan',{})); }
+function dLog(){ return jget('daily_log',{}); }
+let _dDone=null; // cached studied sets, cleared on every save
+function dSave(log){ jset('daily_log',log); _dDone=null; queuePush('daily_log'); }
+let _dTangoMap=null;
+function dTangoMap(){ // id -> tango word object; rebuilt at the start of each 日課 render
+  if(!_dTangoMap){ _dTangoMap={}; tangoPoolAll().forEach(v=>_dTangoMap[v.id]=v); }
+  return _dTangoMap;
+}
+function dKanjiOrder(){
+  const kmap=rIdx().kmap;
+  if(dPlan().kOrder==='level'){ const seen=new Set(); DATA.kanji.forEach(k=>{ if(kmap[k[0]]) seen.add(k[0]); }); return [...seen]; }
+  const out=[]; DATA.radicals.forEach(g=>g.items.forEach(i=>out.push(i.k))); return out;
+}
+function dVocabOrder(){ return tangoPoolAll().map(v=>v.id); }
+function dSets(log){
+  const aK=new Set(),aV=new Set(),sK=new Set(),sV=new Set();
+  Object.values(log).forEach(e=>{ (e.k||[]).forEach(x=>aK.add(x)); (e.v||[]).forEach(x=>aV.add(x));
+    Object.keys(e.dk||{}).forEach(x=>sK.add(x)); Object.keys(e.dv||{}).forEach(x=>sV.add(x)); });
+  return {aK,aV,sK,sV};
+}
+function dPick(order,log,assigned,studied,listKey,per){
+  const carry=[]; // assigned on an earlier day but never studied
+  Object.keys(log).sort().forEach(day=>(log[day][listKey]||[]).forEach(id=>{ if(!studied.has(id)&&!carry.includes(id)) carry.push(id); }));
+  const valid=new Set(order);
+  const out=carry.filter(id=>valid.has(id)).slice(0,per);
+  for(const id of order){ if(out.length>=per) break; if(!assigned.has(id)) out.push(id); }
+  return out;
+}
+function dEnsureToday(){
+  const log=dLog(), t=dToday();
+  if(log[t]) return log;
+  const p=dPlan(), s=dSets(log);
+  const k=dPick(dKanjiOrder(),log,s.aK,s.sK,'k',p.kPer), v=dPick(dVocabOrder(),log,s.aV,s.sV,'v',p.vPer);
+  if(!k.length&&!v.length) return log;
+  log[t]={k,v,dk:{},dv:{}};
+  dSave(log);
+  return log;
+}
+function dMore(kind){ // add another batch to today
+  const log=dEnsureToday(), t=dToday(), p=dPlan(), s=dSets(log);
+  const order=kind==='k'?dKanjiOrder():dVocabOrder(), assigned=kind==='k'?s.aK:s.aV, per=kind==='k'?p.kPer:p.vPer;
+  const add=[]; for(const id of order){ if(add.length>=per) break; if(!assigned.has(id)) add.push(id); }
+  if(!add.length) return;
+  if(!log[t]) log[t]={k:[],v:[],dk:{},dv:{}};
+  log[t][kind]=(log[t][kind]||[]).concat(add); dSave(log);
+  dState.i=log[t][kind].length-add.length; dState.flip=false; render();
+}
+function dItems(){ const log=dLog(), day=dState.day||dToday(), e=log[day]||{k:[],v:[],dk:{},dv:{}}; return {day,e,list:(dState.sub==='k'?e.k:e.v)||[],done:(dState.sub==='k'?e.dk:e.dv)||{}}; }
+function dIsDone(id,kind){ // studied on any day counts (so a carried-over word studied today ticks in every view)
+  if(!_dDone){ const s=dSets(dLog()); _dDone={k:s.sK,v:s.sV}; }
+  return _dDone[kind].has(id);
+}
+function dToggle(idx){
+  const log=dLog(), t=dToday(); const {list}=dItems(); const id=list[idx]; if(id===undefined) return;
+  const f=dState.sub==='k'?'dk':'dv';
+  if(!log[t]) log[t]={k:[],v:[],dk:{},dv:{}};
+  if(!log[t][f]) log[t][f]={};
+  const was=dIsDone(id,dState.sub);
+  if(was){ Object.values(log).forEach(e=>{ if(e[f]) delete e[f][id]; }); }
+  else log[t][f][id]=Date.now();
+  dSave(log);
+  if(!was && dState.mode==='cards'){ // move on to the next unstudied card
+    const n=list.length; for(let s=1;s<=n;s++){ const j=(idx+s)%n; if(!dIsDone(list[j],dState.sub)){ dState.i=j; break; } }
+    dState.flip=false;
+  }
+  render();
+}
+function dMove(d){ const n=dItems().list.length; if(!n) return; dState.flip=false; dState.i=(dState.i+d+n)%n; render(); }
+function dSub(s){ dState.sub=s; dState.i=0; dState.flip=false; render(); }
+function dReview(day){ dState.day=day; dState.i=0; dState.flip=false; dState.mode='cards'; render(); window.scrollTo(0,0); }
+function dSetPlan(k,v){ const p=dPlan(); p[k]=v; jset('daily_plan',p); queuePush('daily_plan'); render(); }
+function dReset(){ jset('daily_log',{}); _dDone=null; queuePush('daily_log'); dState={sub:'k',mode:'cards',i:0,flip:false,day:null,open:null,confirmReset:false}; render(); }
+function dStreak(log){
+  let day=dToday(), n=0;
+  const has=k=>log[k]&&(Object.keys(log[k].dk||{}).length+Object.keys(log[k].dv||{}).length)>0;
+  if(!has(day)) day=dAddDays(day,-1);
+  while(has(day)){ n++; day=dAddDays(day,-1); }
+  return n;
+}
+function dCard(id){
+  if(dState.sub==='k'){
+    const d=rIdx().kmap[id]; if(!d) return '<p class="hint">This kanji is no longer in the deck.</p>';
+    return {front:`<div class="kanji-big">${esc(d.k)}</div><div class="tag">${d.lv}${d.also?'+'+d.also:''} · radical ${esc(d.rad.c.split(' · ')[0])} ${esc(d.rad.jp)}</div>`,
+      back:rBack({kind:'kanji',d}), key:'status_kanji_'+d.lv};
+  }
+  const v=dTangoMap()[id]; if(!v) return '<p class="hint">This word is no longer in the deck.</p>';
+  return {front:`<div class="word-big">${furi(v.w||v.r,v.r)}</div><div class="tag">${esc(v.tag||'')}</div>`,
+    back:`<div style="text-align:center"><p style="font-family:var(--disp);font-size:34px">${esc(v.w||v.r)}</p>
+      <p style="font-size:20px;font-weight:700">${esc(v.r)}</p><p style="font-size:18px;margin-top:6px">${esc(v.m)}</p>
+      ${v.rel?`<p style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-style:italic">${esc(v.rel)}</p>`:''}
+      ${v.exjp?`<div class="exbox"><p style="font-size:15.5px;font-weight:700">${esc(v.exjp)}</p><p style="font-size:13px;color:var(--ink-soft);margin-top:3px">${esc(v.exen)}</p></div>`:''}
+      <button class="btn ghost" style="margin-top:12px" onclick="event.stopPropagation();speak(${JSON.stringify(v.w||v.r).replace(/"/g,'&quot;')})">🔊 Listen</button></div>`,
+    key:'status_tango'};
+}
+function dLabel(id,kind){ if(kind==='k') return id; const v=dTangoMap()[id]; return v?(v.w||v.r):id; }
+function dailyView(){
+  _dDone=null; _dTangoMap=null; // pick up changes from a cloud pull or Tango edits
+  const log=dEnsureToday(), t=dToday(), p=dPlan(), s=dSets(log);
+  const kOrder=dKanjiOrder(), vOrder=dVocabOrder();
+  const kTot=kOrder.length, vTot=vOrder.length;
+  const kSt=kOrder.filter(x=>s.sK.has(x)).length, vSt=vOrder.filter(x=>s.sV.has(x)).length;
+  const te=log[t]||{k:[],v:[],dk:{},dv:{}};
+  const kTodayDone=te.k.filter(x=>s.sK.has(x)).length, vTodayDone=te.v.filter(x=>s.sV.has(x)).length;
+  const kLeftToday=te.k.length-kTodayDone, vLeftToday=te.v.length-vTodayDone;
+  const kFin=dAddDays(t,Math.ceil(Math.max(0,kTot-kSt-kLeftToday)/p.kPer)), vFin=dAddDays(t,Math.ceil(Math.max(0,vTot-vSt-vLeftToday)/p.vPer));
+  const toExam=dDiff(t,D_EXAM);
+  const dayNo=Object.keys(log).filter(k=>k<=t).length;
+  const pct=(a,b)=>b?Math.round(a/b*100):0;
+  const stat=(lab,a,b,sub)=>`<div class="dstat"><div class="lab">${lab}</div><div class="val">${a}<small> / ${b}</small></div><div class="dbar"><i style="width:${pct(a,b)}%"></i></div><div class="sub">${sub}</div></div>`;
+  const finLine=(name,fin,tot,st)=> st>=tot?`<b>${name}: all done</b>`:`${name} finished by <b>${dFmt(fin)}</b>${fin>D_EXAM?' <span class="late">(after the exam)</span>':''}`;
+  // ---- today / review ----
+  const reviewing=dState.day&&dState.day!==t;
+  const {list,day}=dItems();
+  const sub=dState.sub, kind=sub;
+  const doneN=list.filter(id=>dIsDone(id,kind)).length;
+  let body='';
+  if(!list.length) body=`<p class="hint">${reviewing?'Nothing was assigned on this day.':'Everything in this deck has been studied. 🎉'}</p>`;
+  else if(dState.mode==='cards'){
+    dState.i=Math.min(dState.i,list.length-1);
+    const id=list[dState.i], c=dCard(id), done=dIsDone(id,kind);
+    body= typeof c==='string'? c : `<div class="fcwrap"><div class="fc ${dState.flip?'flip':''}" onclick="dState.flip=!dState.flip;render()" role="button" tabindex="0" aria-label="flashcard">
+        <div class="face">${c.front}<div class="tag">tap to flip</div></div>
+        <div class="face back">${c.back}</div></div></div>
+      <div class="dstudy"><button class="btn ${done?'done':'shu'}" onclick="dToggle(${dState.i})">${done?'✓ Studied — tap to undo':'✓ Mark as studied'}</button></div>
+      ${statusRowHTML(c.key,id)}
+      <div class="fcbtns"><button class="btn ghost" onclick="dMove(-1)">← Prev</button><button class="btn ghost" onclick="dMove(1)">Next →</button></div>
+      <div class="progress">${dState.i+1} / ${list.length}</div>`;
+  } else {
+    const tm=dTangoMap(), km=rIdx().kmap;
+    body=`<table class="dlist"><tr><th></th><th>${kind==='k'?'字':'Word'}</th><th>Reading</th><th>Meaning</th></tr>${list.map((id,j)=>{
+      const done=dIsDone(id,kind); let w,r,m;
+      if(kind==='k'){ const d=km[id]||{}; w=`<span style="font-family:var(--disp);font-size:24px">${esc(id)}</span>`; r=esc(d.r||''); m=esc((d.m||'').replace(/\.$/,'')); }
+      else { const v=tm[id]||{}; w=`<b>${furi(v.w||v.r||id,v.r||'')}</b>`; r=esc(v.r||''); m=esc(v.m||''); }
+      return `<tr class="${done?'isdone':''}"><td class="ck"><input type="checkbox" aria-label="studied" ${done?'checked':''} ${reviewing?'':''} onchange="dToggle(${j})"></td><td>${w}</td><td>${r}</td><td>${m}</td></tr>`;}).join('')}</table>`;
+  }
+  const allDone=!reviewing && list.length && doneN===list.length;
+  const moreLeft=(kind==='k'?kOrder.some(x=>!s.aK.has(x)):vOrder.some(x=>!s.aV.has(x)));
+  const doneBox=allDone?`<div class="ddone"><b>Today's ${kind==='k'?'kanji':'words'} are done. お疲れさま！</b>${moreLeft?`<button class="btn ok" onclick="dMore('${kind}')">+ Study ${kind==='k'?p.kPer+' more kanji':p.vPer+' more words'} today</button>`:''}</div>`:'';
+  // ---- log ----
+  const days=Object.keys(log).sort().reverse();
+  const logHTML=days.length?days.map(dk=>{
+    const e=log[dk], kd=Object.keys(e.dk||{}), vd=Object.keys(e.dv||{});
+    const open=dState.open===dk, n=Object.keys(log).sort().indexOf(dk)+1;
+    const full=kd.length>=(e.k||[]).length&&vd.length>=(e.v||[]).length&&(e.k||[]).length+(e.v||[]).length>0;
+    return `<div class="dday"><div class="hd" onclick="dState.open=${open?'null':`'${dk}'`};render()">
+        <div class="dt">${dFmt(dk)}${dk===t?' · today':''}<small>Day ${n} · ${dk}</small></div>
+        <div class="ct"><span>漢字 <b class="${kd.length>=(e.k||[]).length?'full':''}">${kd.length}/${(e.k||[]).length}</b></span><span>語彙 <b class="${vd.length>=(e.v||[]).length?'full':''}">${vd.length}/${(e.v||[]).length}</b></span>${full?'<span class="full">✓ complete</span>':''}${(e.quiz||[]).length?`<span>Quiz ${(e.quiz||[]).map(z=>`${z.s==='k'?'字':'語'} ${z.ok}/${z.n}`).join(' · ')}</span>`:''}</div>
+        <span style="font-size:12px;color:var(--ink-soft)">${open?'▲':'▼'}</span></div>
+      ${open?`<div class="dwhead">Kanji studied</div><div class="dwords">${kd.length?kd.map(x=>`<span>${esc(x)}</span>`).join(''):'<i style="font-size:12.5px;color:var(--ink-soft)">none</i>'}</div>
+        <div class="dwhead">Words studied</div><div class="dwords">${vd.length?vd.map(x=>`<span>${esc(dLabel(x,'v'))}</span>`).join(''):'<i style="font-size:12.5px;color:var(--ink-soft)">none</i>'}</div>
+        ${(e.k||[]).concat(e.v||[]).some(x=>!(e.dk||{})[x]&&!(e.dv||{})[x])?`<div class="dwhead">Assigned but not studied this day</div><div class="dwords">${(e.k||[]).filter(x=>!(e.dk||{})[x]).map(x=>`<span class="no">${esc(x)}</span>`).join('')}${(e.v||[]).filter(x=>!(e.dv||{})[x]).map(x=>`<span class="no">${esc(dLabel(x,'v'))}</span>`).join('')}</div>`:''}
+        <div class="fcbtns" style="justify-content:flex-start"><button class="btn ghost" onclick="dState.sub='k';dReview('${dk}')">Review this day's kanji</button><button class="btn ghost" onclick="dState.sub='v';dReview('${dk}')">Review this day's words</button></div>`:''}
+    </div>`;}).join(''):'<p class="hint">Your log starts when you mark your first card as studied.</p>';
+  return `<div class="panel"><h2 class="sect">日課 Daily study</h2>
+    <div class="hint">${p.kPer} kanji and ${p.vPer} 単語2000 words a day, in order. Anything you don't finish is carried over to the next day first, so nothing gets skipped.</div>
+    <div class="dstats">
+      ${stat('Kanji studied',kSt,kTot,`today ${kTodayDone}/${te.k.length}`)}
+      ${stat('単語2000 words',vSt,vTot,`today ${vTodayDone}/${te.v.length}`)}
+      <div class="dstat"><div class="lab">Streak</div><div class="val">${dStreak(log)}<small> days</small></div><div class="sub">Day ${dayNo||1} of your plan</div></div>
+      <div class="dstat"><div class="lab">JLPT</div><div class="val">${Math.max(0,toExam)}<small> days</small></div><div class="sub">6 Dec 2026</div></div>
+    </div>
+    <div class="dproj">At this pace: ${finLine('Kanji',kFin,kTot,kSt)} · ${finLine('words',vFin,vTot,vSt)}.</div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h2 class="sect">${reviewing?'Review':'Today'} <span style="font-family:var(--jp);font-size:14px;color:var(--ink-soft)">${dFmt(day)}</span></h2>
+    ${reviewing?`<div class="dreview">Reviewing ${dFmt(day)}. Marks you make here count for today. <button class="btn ghost" style="padding:6px 12px;font-size:13px" onclick="dState.day=null;dState.i=0;dState.flip=false;render()">Back to today</button></div>`:''}
+    <div class="chips">
+      <button class="chip ${sub==='k'?'on':''}" onclick="dSub('k')">漢字 Kanji ${(()=>{const L=(log[day]||{}).k||[];return L.filter(x=>dIsDone(x,'k')).length+'/'+L.length})()}</button>
+      <button class="chip ${sub==='v'?'on':''}" onclick="dSub('v')">語彙 Words ${(()=>{const L=(log[day]||{}).v||[];return L.filter(x=>dIsDone(x,'v')).length+'/'+L.length})()}</button>
+      <span style="flex:1"></span>
+      ${['cards','list','quiz'].map(m=>`<button class="chip ${dState.mode===m?'on':''}" onclick="dState.mode='${m}';render()">${{cards:'Flashcards',list:'List',quiz:'Quiz'}[m]}</button>`).join('')}
+    </div>
+    ${dState.mode==='quiz'?dQuizHTML():doneBox+body}
+  </div>
+  <div class="panel" style="margin-top:16px"><h2 class="sect">記録 Study log</h2>
+    <div class="hint">Every day you studied, newest first. Tap a day to see the exact kanji and words.</div>
+    <div class="dlog">${logHTML}</div>
+    <details class="dset" style="margin-top:16px" ${dState.setOpen||dState.confirmReset?'open':''} ontoggle="dState.setOpen=this.open"><summary>Plan settings</summary>
+      <div class="filterrow"><label>Kanji per day</label><input type="number" min="1" max="200" value="${p.kPer}" onchange="dSetPlan('kPer',Math.max(1,parseInt(this.value)||15))">
+        <label>Words per day</label><input type="number" min="1" max="500" value="${p.vPer}" onchange="dSetPlan('vPer',Math.max(1,parseInt(this.value)||40))"></div>
+      <div class="filterrow"><label>Kanji order</label><select class="filtersel" onchange="dSetPlan('kOrder',this.value)">
+        <option value="radical" ${p.kOrder==='radical'?'selected':''}>By radical (部首 groups)</option>
+        <option value="level" ${p.kOrder==='level'?'selected':''}>By level (N5 → N4 → N3)</option></select></div>
+      <p class="hint" style="margin:0">Changes apply from tomorrow's batch. Today's batch stays as it is.</p>
+      ${dState.confirmReset?`<div class="dconfirm">Delete the whole study log and start again from Day 1? <button class="btn shu" onclick="dReset()">Delete log</button><button class="btn ghost" onclick="dState.confirmReset=false;render()">Keep</button></div>`
+        :`<button class="btn ghost" style="margin-top:10px;color:var(--shu);border-color:var(--shu)" onclick="dState.confirmReset=true;render()">Reset study log…</button>`}
+    </details>
+  </div>`;
+}
+
+/* ---- 日課 quiz: multiple choice on today's batch or on everything studied so far ---- */
+let dq={from:1,to:0,scope:'day',qtype:'mix',len:10,active:false,queue:[],idx:0,cur:null,picked:null,score:0,missed:[],done:false,sub:'k'};
+function dqItem(id,kind){
+  if(kind==='k'){ const d=rIdx().kmap[id]; if(!d) return null;
+    return {id,kind,prompt:d.k,mean:d.m.replace(/\.$/,''),read:d.r,key:'status_kanji_'+d.lv,speak:null}; }
+  const v=dTangoMap()[id]; if(!v) return null;
+  const w=v.w||v.r;
+  return {id,kind,prompt:w,mean:v.m,read:v.r,key:'status_tango',speak:w,kanaOnly:!KANJI_RE.test(w)};
+}
+function dqDays(){ return Object.keys(dLog()).sort(); } // Day 1 = first day in the log
+function dqScopeIds(kind){
+  if(dq.scope==='day'){ const {e}=dItemsFor(kind); return (kind==='k'?e.k:e.v)||[]; }
+  if(dq.scope==='range'){ // every kanji/word assigned on Day from..to (each counted once)
+    const log=dLog(), days=dqDays(); if(!days.length) return [];
+    const a=Math.max(1,Math.min(dq.from,days.length)), b=Math.max(1,Math.min(dq.to||days.length,days.length));
+    const out=[], seen=new Set();
+    days.slice(Math.min(a,b)-1,Math.max(a,b)).forEach(d=>((kind==='k'?log[d].k:log[d].v)||[]).forEach(id=>{ if(!seen.has(id)){ seen.add(id); out.push(id); } }));
+    return out;
+  }
+  const s=dSets(dLog()); const order=kind==='k'?dKanjiOrder():dVocabOrder(); const st=kind==='k'?s.sK:s.sV;
+  return order.filter(x=>st.has(x));
+}
+function dItemsFor(kind){ const log=dLog(), day=dState.day||dToday(); return {day,e:log[day]||{k:[],v:[]}}; }
+function dqDistractors(item,field,n){
+  const kind=item.kind, ans=item[field];
+  const order=kind==='k'?dKanjiOrder():dVocabOrder();
+  const pool=shuffle(order).slice(0,80).map(id=>dqItem(id,kind)).filter(x=>x&&x.id!==item.id&&x[field]&&x[field]!==ans);
+  let cands=pool;
+  if(field==='read'&&kind==='v'){ const near=pool.filter(x=>Math.abs(x.read.length-ans.length)<=1); if(near.length>=n) cands=near; }
+  const out=[]; for(const x of cands){ if(out.length>=n) break; if(!out.includes(x[field])) out.push(x[field]); }
+  return out;
+}
+function dqMake(id,kind){
+  const it=dqItem(id,kind); if(!it) return null;
+  let t=dq.qtype==='mix'?['meaning','reading','reverse'][Math.floor(Math.random()*3)]:dq.qtype;
+  if(t==='reading'&&it.kanaOnly) t='meaning';
+  const label={meaning:'What does this mean?',reading:'How is it read?',reverse:kind==='k'?'Which kanji means…':'Which word means…'}[t];
+  const field={meaning:'mean',reading:'read',reverse:'prompt'}[t];
+  const answer=it[field];
+  const opts=shuffle([answer,...dqDistractors(it,field,3)]);
+  return {it,t,label,shown:t==='reverse'?it.mean:it.prompt,answer,opts};
+}
+function dqStart(retryMissed){
+  const kind=dState.sub;
+  let ids=retryMissed?dq.missed.slice():shuffle(dqScopeIds(kind));
+  if(!retryMissed&&dq.len>0) ids=ids.slice(0,dq.len);
+  if(!ids.length) return;
+  Object.assign(dq,{active:true,sub:kind,queue:ids,idx:0,picked:null,score:0,missed:[],done:false});
+  dq.cur=dqMake(ids[0],kind); render();
+}
+function dqPick(i){
+  if(dq.picked!==null||!dq.cur) return;
+  dq.picked=i;
+  const ok=dq.cur.opts[i]===dq.cur.answer;
+  if(ok) dq.score++;
+  else{ dq.missed.push(dq.cur.it.id); if(getStatus(dq.cur.it.key,dq.cur.it.id)!=='practice') setStatus(dq.cur.it.key,dq.cur.it.id,'practice'); }
+  render();
+}
+function dqNext(){
+  dq.idx++; dq.picked=null;
+  if(dq.idx>=dq.queue.length){
+    dq.done=true; dq.cur=null;
+    const log=dEnsureToday(), t=dToday();
+    if(!log[t]) log[t]={k:[],v:[],dk:{},dv:{}};
+    (log[t].quiz=log[t].quiz||[]).push({s:dq.sub,sc:dq.scope,n:dq.queue.length,ok:dq.score,t:Date.now()});
+    dSave(log);
+  } else dq.cur=dqMake(dq.queue[dq.idx],dq.sub);
+  render();
+}
+function dqQuit(){ dq.active=false; dq.done=false; dq.cur=null; render(); }
+function dQuizHTML(){
+  const kind=dState.sub, name=kind==='k'?'kanji':'words';
+  if(dq.active&&dq.sub!==kind){ dq.active=false; dq.done=false; }
+  if(!dq.active){
+    const nDay=dqScopeIds.call(null,kind).length; // current scope size
+    const sizeFor=sc=>{ const keep=dq.scope; dq.scope=sc; const n=dqScopeIds(kind).length; dq.scope=keep; return n; };
+    const nD=sizeFor('day'), nS=sizeFor('studied'), nR=sizeFor('range');
+    const days=dqDays(), last=days.length;
+    const dayOpt=(sel)=>days.map((d,i)=>`<option value="${i+1}" ${sel===i+1?'selected':''}>Day ${i+1} · ${dFmt(d)}</option>`).join('');
+    const toSel=dq.to&&dq.to<=last?dq.to:last;
+    const set=(k,v)=>`dq.${k}=${typeof v==='string'?`'${v}'`:v};render()`;
+    return `<div class="filterrow"><label>Quiz on</label>
+        <button class="chip ${dq.scope==='day'?'on':''}" onclick="${set('scope','day')}">${dState.day&&dState.day!==dToday()?'This day':'Today'}'s ${name} (${nD})</button>
+        <button class="chip ${dq.scope==='studied'?'on':''}" onclick="${set('scope','studied')}">All studied so far (${nS})</button>
+        <button class="chip ${dq.scope==='range'?'on':''}" onclick="${set('scope','range')}">Day range${dq.scope==='range'?` (${nR})`:''}</button></div>
+      ${dq.scope==='range'?(last?`<div class="filterrow"><label>From</label><select class="filtersel" onchange="dq.from=parseInt(this.value);render()">${dayOpt(Math.min(dq.from,last))}</select>
+        <label>to</label><select class="filtersel" onchange="dq.to=parseInt(this.value);render()">${dayOpt(toSel)}</select></div>
+        <p class="hint" style="margin-top:-4px">Uses every ${name==='kanji'?'kanji':'word'} assigned on those days (${nR}).</p>`:'<p class="hint">No days in your log yet.</p>'):''}
+      <div class="filterrow"><label>Question</label><select class="filtersel" onchange="dq.qtype=this.value">
+        ${[['mix','Mixed'],['meaning',kind==='k'?'Kanji → meaning':'Word → meaning'],['reading',kind==='k'?'Kanji → reading':'Word → reading'],['reverse',kind==='k'?'Meaning → kanji':'Meaning → word']].map(([v,l])=>`<option value="${v}" ${dq.qtype===v?'selected':''}>${l}</option>`).join('')}</select>
+        <label>Questions</label><select class="filtersel" onchange="dq.len=parseInt(this.value)">
+        ${[[10,'10'],[20,'20'],[40,'40'],[0,'All']].map(([v,l])=>`<option value="${v}" ${dq.len===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div class="dstudy"><button class="btn shu" ${nDay?'':'disabled style="opacity:.5"'} onclick="dqStart(false)">Start quiz</button></div>
+      <p class="hint" style="text-align:center;margin-top:10px">Wrong answers are set to ● Practice so they show up in your practice lists. Scores are saved in the study log.</p>`;
+  }
+  if(dq.done){
+    const pct=Math.round(dq.score/dq.queue.length*100);
+    return `<div class="ddone" style="background:${pct>=80?'#E7F0E5':'#FBEFC9'};border-color:${pct>=80?'var(--ok)':'var(--gold)'}">
+        <div style="font-family:var(--disp);font-size:34px">${dq.score} / ${dq.queue.length}</div>
+        <div>${pct>=90?'すばらしい！':pct>=70?'よくできました！':'もう少し！'} ${pct}%</div>
+        ${dq.missed.length?`<div class="dwords" style="justify-content:center">${dq.missed.map(id=>`<span>${esc(dLabel(id,dq.sub))}</span>`).join('')}</div>`:''}
+        <div class="fcbtns">${dq.missed.length?`<button class="btn shu" onclick="dqStart(true)">Retry the ${dq.missed.length} missed</button>`:''}
+          <button class="btn ghost" onclick="dqStart(false)">New quiz</button><button class="btn ghost" onclick="dqQuit()">Quiz settings</button></div></div>`;
+  }
+  const c=dq.cur; if(!c) return '';
+  const isWord=c.t!=='reverse';
+  return `<div class="progress" style="margin:0 0 4px">Question ${dq.idx+1} / ${dq.queue.length} · score ${dq.score} <button class="btn ghost" style="padding:4px 10px;font-size:12px;margin-left:8px" onclick="dqQuit()">End</button></div>
+    <div class="hint" style="text-align:center;margin:6px 0 0">${c.label}</div>
+    <div class="qword" style="${isWord?'':'font-family:var(--jp);font-size:24px;font-weight:700'}">${esc(c.shown)}</div>
+    <div class="qopts">${c.opts.map((o,i)=>{
+      let cls=''; if(dq.picked!==null){ cls='done'; if(o===c.answer) cls+=' right'; else if(i===dq.picked) cls+=' wrong'; }
+      return `<button class="qopt ${cls}" style="${c.t==='reverse'?'font-family:var(--disp);font-size:22px;text-align:center':''}" onclick="dqPick(${i})">${esc(o)}</button>`;}).join('')}</div>
+    ${dq.picked!==null?`<div class="exbox" style="max-width:560px;margin:14px auto 0"><b style="font-family:var(--disp);font-size:20px">${esc(c.it.prompt)}</b> · ${esc(c.it.read)}<br>${esc(c.it.mean)}
+      ${c.it.speak?`<br><button class="btn ghost" style="margin-top:8px;padding:6px 12px;font-size:13px" onclick="speak(${JSON.stringify(c.it.speak).replace(/"/g,'&quot;')})">🔊 Listen</button>`:''}</div>
+      <div class="fcbtns"><button class="btn shu" onclick="dqNext()">${dq.idx+1>=dq.queue.length?'See score':'Next →'}</button></div>`:''}`;
+}
+
 function render(){
   const m=document.getElementById('main');
-  m.innerHTML = tab==='home'?homeView():tab==='kanji'?kanjiView():tab==='radicals'?radicalsView():tab==='vocab'?vocabView():tab==='pj'?pjVocabView():tab==='tango'?tangoView():tab==='grammar'?grammarView():tab==='sentences'?sentencesView():quizView();
+  m.innerHTML = tab==='home'?homeView():tab==='daily'?dailyView():tab==='kanji'?kanjiView():tab==='radicals'?radicalsView():tab==='vocab'?vocabView():tab==='pj'?pjVocabView():tab==='tango'?tangoView():tab==='grammar'?grammarView():tab==='sentences'?sentencesView():quizView();
 }
 renderNav(); updateFuriBtn(); render();
 if('speechSynthesis' in window){ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }
